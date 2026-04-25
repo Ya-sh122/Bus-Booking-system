@@ -1,20 +1,13 @@
-const express =  require('express')
-const app = express();
+const User = require("./user");
+const Bus = require("./bus");
+const Booking = require("./booking");
 
-const userRoutes = require('./routes/userRoutes');
-const busRoutes = require('./routes/busRoutes');
+// User ↔ Booking
+User.hasMany(Booking);
+Booking.belongsTo(User);
 
-app.use(express.json());
+// Bus ↔ Booking
+Bus.hasMany(Booking);
+Booking.belongsTo(Bus);
 
-
-//Routes
-app.use('/', userRoutes);
-app.use('/', busRoutes);
-
-
-//Server 
-app.listen(3000,()=>{
-    console.log('Server is running on port 3000');
-});
-
-
+module.exports = { User, Bus, Booking };

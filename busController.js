@@ -1,29 +1,25 @@
-const db = require('../db/db-connection');
+const { Bus, Booking, User } = require("../models");
 
-// POST /buses
-exports.addBus = (req, res) => {
-    const { bus_name, total_seats, available_seats } = req.body;
-
-    const sql = "INSERT INTO buses (bus_name, total_seats, available_seats) VALUES (?, ?, ?)";
-    db.query(sql, [bus_name, total_seats, available_seats], (err, result) => {
-        if (err) {
-            return res.status(500).json({ error: err.message });
-        }
-        res.json({ message: "Bus added successfully" });
-    });
+exports.createBus = async (req, res) => {
+  try {
+    const bus = await Bus.create(req.body);
+    res.status(201).json(bus);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 };
 
+exports.getBusBookings = async (req, res) => {
+  try {
+    const { id } = req.params;
 
-
-// GET /buses/available/:seats
-exports.getAvailableBuses = (req, res) => {
-    const seats = req.params.seats;
-
-    const sql = "SELECT * FROM buses WHERE available_seats > ?";
-    db.query(sql, [seats], (err, result) => {
-        if (err) {
-            return res.status(500).json({ error: err.message });
-        }
-        res.json(result);
+    const bookings = await Booking.findAll({
+      where: { BusId: id },
+      include: [{ model: User, attributes: ["name", "email"] }],
     });
+
+    res.json(bookings);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 };

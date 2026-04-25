@@ -1,10 +1,8 @@
-const express = require('express');
+const express = require("express");
+const controller = require("../controller/busController");
 const router = express.Router();
-const busController = require('../controllers/busController');
 
+router.post("/", controller.createBus);
+router.get("/:id/bookings", controller.getBusBookings);
 
-router.post('/buses', busController.addBus);
-router.get('/buses/available/:seats', busController.getAvailableBuses);
-
-
-module.exports= router;
+module.exports = router;
